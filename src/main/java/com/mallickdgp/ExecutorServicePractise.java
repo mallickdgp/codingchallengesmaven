@@ -34,6 +34,7 @@ public class ExecutorServicePractise {
 
     public static void solution(final List<TaskSimul> tasks) {
 
+
         ExecutorService service = Executors.newFixedThreadPool(4);
 
         for (TaskSimul task : tasks) {
