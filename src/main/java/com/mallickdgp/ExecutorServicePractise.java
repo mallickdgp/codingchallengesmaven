@@ -1,11 +1,9 @@
 package com.mallickdgp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class ExecutorServicePractise {
     public static void main(String[] args) {
@@ -16,20 +14,20 @@ public class ExecutorServicePractise {
         t3Dependencies.add(task1);
         t3Dependencies.add(task2);
         TaskSimul task3 = new TaskSimul("t3", t3Dependencies);
-        TaskSimul task4 = new TaskSimul("t4", null);
+        /*TaskSimul task4 = new TaskSimul("t4", null);
         TaskSimul task5 = new TaskSimul("t5", null);
         List<TaskSimul> t6Dependencies = new ArrayList<>();
         t6Dependencies.add(task4);
         t6Dependencies.add(task5);
-        TaskSimul task6 = new TaskSimul("t6", t6Dependencies);
+        TaskSimul task6 = new TaskSimul("t6", t6Dependencies);*/
 
         tasks.add(task1);
         tasks.add(task2);
         tasks.add(task3);
-        tasks.add(task4);
+       /* tasks.add(task4);
         tasks.add(task5);
-        tasks.add(task6);
-        solution(tasks);
+        tasks.add(task6);*/
+        solution2(tasks);
     }
 
     public static void solution(final List<TaskSimul> tasks) {
@@ -46,10 +44,11 @@ public class ExecutorServicePractise {
                     else {
                         System.out.println("Checking dependencies");
                         for (TaskSimul depTask : task.getDependencies()) {
-                            if (depTask.isCompleted())
-                                canExecute = true;
-                            else
-                                canExecute = false;
+                           if(!depTask.isCompleted()) {
+                               canExecute = false;
+                               break;
+                           }
+                           canExecute = true;
                         }
                     }
                     if (canExecute) {
@@ -73,6 +72,57 @@ public class ExecutorServicePractise {
         service.shutdown();
 
 
+    }
+
+    public static void solution2(Collection<TaskSimul> tasks){
+        ExecutorService service = Executors.newFixedThreadPool(4);
+
+        List<Callable<String>> runnables = new ArrayList<>();
+
+        for(TaskSimul task: tasks){
+            Callable<String> runnable = () -> {
+               while(!task.isCompleted()){
+                   System.out.println("Current Thread " + task.getName());
+                   boolean canExecute = false;
+                   if (task.getDependencies() == null)
+                       canExecute = true;
+                   else {
+                       System.out.println("Checking dependencies");
+                       for (TaskSimul depTask : task.getDependencies()) {
+                           if(!depTask.isCompleted()) {
+                               canExecute = false;
+                               break;
+                           }
+                           canExecute = true;
+                       }
+                   }
+                   if (canExecute) {
+                       task.execute();
+                       System.out.println(task.getName());
+                   } else {
+                       System.out.println("Putting " + task.getName() + " to sleep");
+                       try {
+                           Thread.sleep(4000);
+
+                       } catch (InterruptedException iex) {
+
+                       }
+                   }
+
+               }
+
+               return task.getName();
+            };
+
+            runnables.add(runnable);
+        }
+        try {
+            service.invokeAll(runnables);
+        }catch (InterruptedException iex){
+
+        }finally {
+            service.shutdown();
+        }
     }
 }
 
