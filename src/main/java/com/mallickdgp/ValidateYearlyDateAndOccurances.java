@@ -138,7 +138,8 @@ public class ValidateYearlyDateAndOccurances {
             Calendar finishCalender = GregorianCalendar.getInstance();
             beginCalender.setTime(startDate);
             finishCalender.setTime(endDate);
-            final TreeMap<Integer, Integer> monthsInDateRange = new TreeMap<Integer, Integer>(calculateMonthsInDateRange(beginCalender, finishCalender));
+            final TreeMap<Integer, Integer> monthsInDateRange =
+                    new TreeMap<Integer, Integer>(calculateMonthsInDateRange(startDate, endDate));
            // final HashMap<Integer, Integer> monthsInDateRange = ;
 
             final Integer lastDayOfRecurrence = calculateLastDayofIterationLimit(finishCalender);
@@ -185,8 +186,12 @@ public class ValidateYearlyDateAndOccurances {
         }
     }
 
-    public static HashMap<Integer, Integer> calculateMonthsInDateRange(Calendar beginCalender, Calendar finishCalender){
+    public static HashMap<Integer, Integer> calculateMonthsInDateRange(Date startDate, Date endDate){
+        Calendar beginCalender = GregorianCalendar.getInstance();
+        Calendar finishCalender = GregorianCalendar.getInstance();
 
+        beginCalender.setTime(startDate);
+        finishCalender.setTime(endDate);
 
 
         HashMap<Integer, Integer> noOfMonths = new HashMap<>();

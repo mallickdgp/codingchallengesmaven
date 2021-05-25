@@ -33,15 +33,16 @@ public class ValidateYearlyDateAndOccurancesTest {
     public void test_CalculateMonthinDateRange(){
         try{
             Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/06/2021");
-            Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("30/09/2022");
-            Calendar beginCalender = GregorianCalendar.getInstance();
-            Calendar finishCalender = GregorianCalendar.getInstance();
-            beginCalender.setTime(startDate);
-            finishCalender.setTime(endDate);
+            Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("30/03/2022");
+//            Calendar beginCalender = GregorianCalendar.getInstance();
+//            Calendar finishCalender = GregorianCalendar.getInstance();
+//            beginCalender.setTime(startDate);
+//            finishCalender.setTime(endDate);
 
-            HashMap<Integer, Integer> noOfMonths = ValidateYearlyDateAndOccurances.calculateMonthsInDateRange(beginCalender, finishCalender);
+            HashMap<Integer, Integer> noOfMonths = ValidateYearlyDateAndOccurances
+                    .calculateMonthsInDateRange(startDate, endDate);
 
-            assertEquals(12, noOfMonths.size());
+            assertEquals(10, noOfMonths.size());
         }catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
         }
@@ -49,13 +50,13 @@ public class ValidateYearlyDateAndOccurancesTest {
 
     @Test
     public void test_MultipleOccurances(){
-        String startDate = "01/07/2021";
-        String endDate = "30/06/2022";
+        String startDate = "09/07/2021";
+        String endDate = "30/05/2022";
 
         String recurrenceDetails = "{\n" +
                 "  \"det\": [\n" +
                 "    {\n" +
-                "      \"month\": \"6\",\n" +
+                "      \"month\": \"7\",\n" +
                 "      \"day\": [\n" +
                 "        \"10\",\n" +
                 "        \"20\"\n" +
@@ -69,10 +70,10 @@ public class ValidateYearlyDateAndOccurancesTest {
                 "      ]\n" +
                 "    },\n" +
                 "    {\n" +
-                "      \"month\": \"10\",\n" +
+                "      \"month\": \"5\",\n" +
                 "      \"day\": [\n" +
                 "        \"10\",\n" +
-                "        \"31\"\n" +
+                "        \"28\"\n" +
                 "      ]\n" +
                 "    }\n" +
                 "  ]\n" +
