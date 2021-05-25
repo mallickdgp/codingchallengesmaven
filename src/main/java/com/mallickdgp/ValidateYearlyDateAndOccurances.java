@@ -134,13 +134,29 @@ public class ValidateYearlyDateAndOccurances {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date startDate = sdf.parse(fromDate);
             Date endDate = sdf.parse(toDate);
+            Calendar beginCalender = GregorianCalendar.getInstance();
+            Calendar finishCalender = GregorianCalendar.getInstance();
+            beginCalender.setTime(startDate);
+            finishCalender.setTime(endDate);
+            final TreeMap<Integer, Integer> monthsInDateRange = new TreeMap<Integer, Integer>(calculateMonthsInDateRange(beginCalender, finishCalender));
+           // final HashMap<Integer, Integer> monthsInDateRange = ;
 
-            final HashMap<Integer, Integer> monthsInDateRange = calculateMonthsInDateRange(startDate, endDate);
+            final Integer lastDayOfRecurrence = calculateLastDayofIterationLimit(finishCalender);
+            final Integer firstDayOfRecurrence = calculateFirstDayofIterationLimit(beginCalender);
+            final Integer lastMonthofIteration = calculateLastMonthofIterationLimit(finishCalender);
+            final Integer firstMonthofIteration = calculateFirstMonthofIterationLimit(beginCalender);
             final List listOfDays = new ArrayList<String>();
             if(recurrenceDetails.containsKey("det")){
                 getMonthsAndDaysfromRecurrenceDetails(recurrenceDetails).forEach(md ->{
                     if(!monthsInDateRange.containsKey(Integer.parseInt((String) md.get("month")) - 1))
                         throw new IllegalStateException("Month in recurrence not present in date range!");
+                    boolean isLastMonthOfIteration = false;
+                    if(lastMonthofIteration ==  Integer.parseInt((String) md.get("month")) - 1)
+                        isLastMonthOfIteration = true;
+
+                    boolean isFirstMonthOfIteration = false;
+                    if(firstMonthofIteration == Integer.parseInt((String) md.get("month")) - 1)
+                        isFirstMonthOfIteration = true;
 
                     listOfDays.addAll((List<String>) md.get("day"));
                     for(Object day : listOfDays){
@@ -149,10 +165,18 @@ public class ValidateYearlyDateAndOccurances {
                                 (Integer.parseInt((String) md.get("month")) - 1)){
                             throw new IllegalStateException("Day in recurrence is illegal!");
                         }
+                        if(isLastMonthOfIteration && Integer.parseInt((String) day) > lastDayOfRecurrence)
+                            throw new IllegalArgumentException("Last day of recurrance is greater than end date!");
+
+                        if(isFirstMonthOfIteration && Integer.parseInt((String) day) < firstDayOfRecurrence)
+                            throw new IllegalArgumentException("First day of recurrance is less than start date!");
                     }
+                    listOfDays.clear();
 
 
                 });
+            }else{
+                throw new IllegalArgumentException("Recurrence Details missing in data!");
             }
 
 
@@ -161,14 +185,9 @@ public class ValidateYearlyDateAndOccurances {
         }
     }
 
-    public static HashMap<Integer, Integer> calculateMonthsInDateRange(Date fromDate, Date toDate){
+    public static HashMap<Integer, Integer> calculateMonthsInDateRange(Calendar beginCalender, Calendar finishCalender){
 
 
-        Calendar beginCalender = GregorianCalendar.getInstance();
-        Calendar finishCalender = GregorianCalendar.getInstance();
-
-        beginCalender.setTime(fromDate);
-        finishCalender.setTime(toDate);
 
         HashMap<Integer, Integer> noOfMonths = new HashMap<>();
 
@@ -185,6 +204,8 @@ public class ValidateYearlyDateAndOccurances {
     public static List<Map<String, Object>> getMonthsAndDaysfromRecurrenceDetails(Map<String, Object> recurrenceDetails){
         List<Map<String, Object>> listOfMonthlyDetails = (List<Map<String, Object>>) recurrenceDetails.get("det");
 
+
+
         return listOfMonthlyDetails;
     }
 
@@ -194,6 +215,21 @@ public class ValidateYearlyDateAndOccurances {
         YearMonth yearMonth = YearMonth.of(yearValue, calender.get(Calendar.MONTH) + 1);
 
         return yearMonth.lengthOfMonth();
+    }
+
+    public static Integer calculateLastDayofIterationLimit(Calendar finishCalender){
+        return finishCalender.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static Integer calculateFirstDayofIterationLimit(Calendar beginCalendar){
+        return beginCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static Integer calculateLastMonthofIterationLimit(Calendar finishCalender){
+        return finishCalender.get(Calendar.MONTH);
+    }
+    public static Integer calculateFirstMonthofIterationLimit(Calendar beginCalendar){
+        return beginCalendar.get(Calendar.MONTH);
     }
 
 }

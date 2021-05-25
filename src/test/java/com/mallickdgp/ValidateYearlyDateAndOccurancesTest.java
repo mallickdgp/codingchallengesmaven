@@ -3,10 +3,7 @@ package com.mallickdgp;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,12 +33,15 @@ public class ValidateYearlyDateAndOccurancesTest {
     public void test_CalculateMonthinDateRange(){
         try{
             Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/06/2021");
-            Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse("30/09/2022");
+            Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("30/09/2022");
+            Calendar beginCalender = GregorianCalendar.getInstance();
+            Calendar finishCalender = GregorianCalendar.getInstance();
+            beginCalender.setTime(startDate);
+            finishCalender.setTime(endDate);
 
+            HashMap<Integer, Integer> noOfMonths = ValidateYearlyDateAndOccurances.calculateMonthsInDateRange(beginCalender, finishCalender);
 
-            HashMap<Integer, Integer> noOfMonths = ValidateYearlyDateAndOccurances.calculateMonthsInDateRange(startDate, fromDate);
-
-            assertEquals(16, noOfMonths.size());
+            assertEquals(12, noOfMonths.size());
         }catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
         }
