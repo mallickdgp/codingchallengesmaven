@@ -33,7 +33,7 @@ public class ValidateYearlyDateAndOccurancesTest {
     public void test_CalculateMonthinDateRange(){
         try{
             Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/06/2021");
-            Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("30/03/2022");
+            Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("02/04/2022");
 //            Calendar beginCalender = GregorianCalendar.getInstance();
 //            Calendar finishCalender = GregorianCalendar.getInstance();
 //            beginCalender.setTime(startDate);
@@ -42,7 +42,7 @@ public class ValidateYearlyDateAndOccurancesTest {
             HashMap<Integer, Integer> noOfMonths = ValidateYearlyDateAndOccurances
                     .calculateMonthsInDateRange(startDate, endDate);
 
-            assertEquals(10, noOfMonths.size());
+            assertEquals(11, noOfMonths.size());
         }catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
         }
